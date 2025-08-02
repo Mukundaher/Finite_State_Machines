@@ -15,24 +15,43 @@ module state_machine_mealy(clk, reset, in, out);
     end
 
     // Next state logic
-    always @(*) begin
-        case (state)
-            zero:    next_state = in ? one1  : zero;
-            one1:    next_state = in ? two1s : zero;
-            two1s:   next_state = in ? two1s : zero;
-            default: next_state = zero;
-        endcase
+   always @(*) begin
+  case (state)
+    zero: begin
+      if (in) begin
+        next_state = one1;
+        out = 0;
+      end else begin
+        next_state = zero;
+        out = 0;
+      end
     end
+    one1: begin
+      if (in) begin
+        next_state = two1s;
+        out = 0;
+      end else begin
+        next_state = zero;
+        out = 0;
+      end
+    end
+    two1s: begin
+      if (in) begin
+        next_state = two1s;
+        out = 1;
+      end else begin
+        next_state = zero;
+        out = 1;
+      end
+    end
+    default: begin
+      next_state = zero;
+      out = 0;
+    end
+  endcase
+end
 
-    // Output logic
-    always @(*) begin
-        case (state)
-            zero:    out = 0;
-            one1:    out = 0;
-            two1s:   out = 1;
-            default: out = 0;
-        endcase
-    end
+
 
     // For GTKWave visibility
     // Declare state names as strings for debugging
